@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 import pandas as pd
 from typing import Any, Dict, Literal
 import logging
+import time
 
 class DatabricksConnector(BaseConnector):
     def __init__(self, host: str, token: str):
@@ -57,6 +58,11 @@ class DatabricksConnector(BaseConnector):
             statement=query,
             wait_timeout="10s" 
         )
+        statment_id = response.statement_id
+        if response.status in ["PENDING", "RUNING"]:
+            time.sleep(3)
+            if statment_id:
+                response = self.client.statement_execution.get_statement(statement_id= statment_id)
         return response.as_dict() 
 
     def run_job(self, job_id: int, **kwargs) -> Any:
