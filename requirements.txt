@@ -5,3 +5,4 @@ pandas
 databricks-sdk 
 databricks-sql-connector
 sqlalchemy
+pydantic_settings
