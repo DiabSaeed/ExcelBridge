@@ -28,5 +28,5 @@ class BaseConnector(ABC):
         pass
     
     @abstractmethod
-    def download_df(self, table_name: str, query: str, **kwargs) -> DataFrame:
+    def download_df(self, query: str, **kwargs) -> DataFrame:
         pass    

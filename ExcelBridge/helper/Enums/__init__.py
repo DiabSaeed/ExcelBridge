@@ -1,1 +1,1 @@
-from ResponsesEnums import ResponseEnums
+from .ResponsesEnums import ResponseEnums

@@ -1,5 +1,5 @@
 import logging
-from DatabricksConnector import DatabricksConnector
+from .DatabricksConnector import DatabricksConnector
 
 class Factory:
     
@@ -10,6 +10,8 @@ class Factory:
     def connect(self, host:str,token:str ):
         if self.connector_name.lower() == "databricks":
             self.connection = DatabricksConnector(host= host, token= token)
+            self.connection = self.connection.connect()
+        return self.connection
     def disconnect(self):
         if self.connection:
             self.connection.disconnect()

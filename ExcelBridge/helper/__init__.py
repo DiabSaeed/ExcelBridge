@@ -1,2 +1,2 @@
-from Config import Settings
-from Enums import ResponseEnums
+from .Config import Settings
+from .Enums import ResponseEnums

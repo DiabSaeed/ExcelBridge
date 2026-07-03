@@ -1,1 +1,1 @@
-from ConnectorFactory import Factory
+from .ConnectorFactory import Factory
