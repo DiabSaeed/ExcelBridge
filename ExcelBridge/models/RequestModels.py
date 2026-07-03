@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
+from typing import Optional
 
 class DatabricksConfig(BaseModel):
     host: str = Field(..., description="Databricks workspace URL")
