@@ -1,7 +1,8 @@
 from .baseConnector import BaseConnector
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.jobs import SubmitTask, NotebookTask
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine #type: ignore
+from databricks import sql
 import pandas as pd
 from typing import Any, Dict, Literal
 import logging
@@ -42,7 +43,7 @@ class DatabricksConnector(BaseConnector):
         
         clean_host = self.host.replace("https://", "").replace("http://", "")
         
-        connection_string = f"databricks+connector://token:{self.token}@{clean_host}?http_path={http_path}&catalog={catalog}&schema={schema}"
+        connection_string = f"databricks://token:{self.token}@{clean_host}?http_path={http_path}&catalog={catalog}&schema={schema}"
         
         if connection_key not in self._engines:
             self.logger.info("Creating new connection engine")
@@ -97,8 +98,9 @@ class DatabricksConnector(BaseConnector):
                 catalog=catalog,
                 schema=schema
             )
-            df.to_sql(name=table_name, con=engine, if_exists=mode, index=False)
-            return True
+            with engine.begin() as conn:
+                df.to_sql(name=table_name, con=conn, if_exists=mode, index=False)
+                return True
         except Exception as e:
             self.logger.error(e)
             raise RuntimeError(f"Upload failed: {e}") 
