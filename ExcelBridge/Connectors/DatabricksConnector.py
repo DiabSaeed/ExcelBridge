@@ -15,7 +15,13 @@ class DatabricksConnector(BaseConnector):
         self.logger = logging.getLogger(__name__)
         
     def connect(self, **kwargs) -> Any:
-        self.client = WorkspaceClient(host=self.host, token=self.token)
+        if not self.host or self.token:
+            self.logger.error("Enter a valid Host or Token")
+            return None
+        try:
+            self.client = WorkspaceClient(host=self.host, token=self.token)
+        except Exception as e:
+            self.logger.error(f"Connection failed: {e}")
         return self.client 
 
     def disconnect(self) -> None:
@@ -32,7 +38,7 @@ class DatabricksConnector(BaseConnector):
         return self._engines[connection_key]
         
     def execute_query(self, query: str, warehouse_id: str, **kwargs) -> Dict[str, Any]:
-        response = self.client.statement_execution.execute_statement(
+        response = self.client.statement_execution.execute_statement( #type: ignore
             warehouse_id=warehouse_id,
             statement=query,
             wait_timeout="10s" 
@@ -40,7 +46,7 @@ class DatabricksConnector(BaseConnector):
         return response.as_dict() 
 
     def run_job(self, job_id: int, **kwargs) -> Any:
-        response = self.client.jobs.run_now(job_id=job_id)
+        response = self.client.jobs.run_now(job_id=job_id) #type: ignore
         return response.as_dict()
 
     def run_notebook(self, notebook_path: str, cluster_id: str, **kwargs) -> Any:
@@ -52,7 +58,7 @@ class DatabricksConnector(BaseConnector):
                 notebook_task=nb_task
             )
             
-            response = self.client.jobs.submit(
+            response = self.client.jobs.submit( #type: ignore
                 run_name="ExcelBridge_Notebook_Run",
                 tasks=[task]
             )
